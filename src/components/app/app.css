@@ -5,6 +5,8 @@ h1 {
 .game-wrapper {
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .current-player-info {

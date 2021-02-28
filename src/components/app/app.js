@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { calculateWinner } from '../../winner';
 import Board from '../board/board';
 import CustomizedTables from './../history/history';
+import Footer from './../footer/footer';
 import './app.css';
 
 const App = () => {
@@ -38,6 +39,7 @@ const App = () => {
         <Board squares={history[stepNumber].boardState} onClick={handleClick} />
         <CustomizedTables history={history} />
       </div>
+      <Footer />
     </>
   );
 };
