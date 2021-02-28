@@ -1,0 +1,9 @@
+.history-table-wrapper {
+  width: 40%;
+  height: fit-content;
+  margin-left: 2%;
+}
+
+.table {
+  minwidth: 20;
+}

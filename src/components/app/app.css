@@ -1,0 +1,14 @@
+h1 {
+  margin: 2rem;
+}
+
+.game-wrapper {
+  width: 100%;
+  display: flex;
+}
+
+.current-player-info {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2%;
+}
