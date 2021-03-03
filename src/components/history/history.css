@@ -1,0 +1,8 @@
+.history-table-wrapper {
+  height: fit-content;
+  margin: 2%;
+}
+
+.history-table-hidden {
+  visibility: hidden;
+}
