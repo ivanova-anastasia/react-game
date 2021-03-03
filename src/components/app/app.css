@@ -18,3 +18,12 @@ h3 {
   font-size: 2rem;
   margin-bottom: 2%;
 }
+
+.app-header {
+  display: flex;
+}
+
+.settings-icon {
+  margin-left: 5vw;
+  margin-right: 30vw;
+}

@@ -6,6 +6,7 @@ import Footer from './../footer/footer';
 import FloatingBtn from './../floating-btn/floating-btn';
 import CustomizedSnackbars from './../snackbar/snackbar';
 import VerticalTabs from './../app-settings/app-settings';
+import CustomizedDialogs from './../app-settings/settings-dialog';
 import {
   stepAudio,
   winAudio,
@@ -23,7 +24,9 @@ import {
   Adb,
   Apple,
   SportsHandball,
+  Tune,
 } from '@material-ui/icons';
+import IconButton from '@material-ui/core/IconButton';
 
 import './app.css';
 
@@ -66,6 +69,8 @@ const App = () => {
   });
 
   const [stepsBlockIsShowing, setStepsBlockIsShowing] = useState(true);
+
+  const [settingDialogOpen, setSettingDialogOpen] = useState(false);
 
   const initialHistoryState = [
     { layerName: null, boardState: Array(9).fill(null) },
@@ -257,28 +262,52 @@ const App = () => {
     }
   };
 
+  const handleSettingDialogOpen = () => {
+    setSettingDialogOpen(true);
+  };
+  const handleSettingDialogClose = () => {
+    setSettingDialogOpen(false);
+  };
+
   return (
     <>
       <div className='app-wrapper' onKeyDown={handleKeyDown} tabIndex='0'>
-        <h3 className='current-player-info'>{getResultMsg()}</h3>
+        <div className='app-header'>
+          <IconButton
+            className='settings-icon'
+            color='inherit'
+            style={{ marginLeft: '5vw', marginRight: '30vw' }}
+            onClick={handleSettingDialogOpen}
+          >
+            <Tune style={{ width: '8vw', height: 'inherit', padding: '15%' }} />
+          </IconButton>
+          <h3 className='current-player-info'>{getResultMsg()}</h3>
+        </div>
+
+        <CustomizedDialogs
+          handleSettingDialogClose={handleSettingDialogClose}
+          settingDialogOpen={settingDialogOpen}
+          settingsComponent={
+            <VerticalTabs
+              changeMusicState={changeMusicState}
+              music={music}
+              changeVolumeMusic={changeVolumeMusic}
+              changeSoundsState={changeSoundsState}
+              sounds={sounds}
+              changeVolumeSounds={changeVolumeSounds}
+              xIsFirst={xIsNext.defaultValue}
+              changeFirstPlayerState={changeFirstPlayerState}
+              iconView={iconView}
+              changeXIconView={changeXIconView}
+              changeOIconView={changeOIconView}
+              xSelects={X_VIEWS}
+              oSelects={O_VIEWS}
+              changeStepsBlockIsShowingState={changeStepsBlockIsShowingState}
+              stepsBlockIsShowing={stepsBlockIsShowing}
+            />
+          }
+        />
         <div className='game-wrapper'>
-          <VerticalTabs
-            changeMusicState={changeMusicState}
-            music={music}
-            changeVolumeMusic={changeVolumeMusic}
-            changeSoundsState={changeSoundsState}
-            sounds={sounds}
-            changeVolumeSounds={changeVolumeSounds}
-            xIsFirst={xIsNext.defaultValue}
-            changeFirstPlayerState={changeFirstPlayerState}
-            iconView={iconView}
-            changeXIconView={changeXIconView}
-            changeOIconView={changeOIconView}
-            xSelects={X_VIEWS}
-            oSelects={O_VIEWS}
-            changeStepsBlockIsShowingState={changeStepsBlockIsShowingState}
-            stepsBlockIsShowing={stepsBlockIsShowing}
-          />
           <Board
             squares={history[stepNumber].boardState}
             icons={iconView}
