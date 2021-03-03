@@ -1,5 +1,4 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/core/styles';
@@ -18,29 +17,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CustomizedSnackbars({ severity, closeSnackBar }) {
   const classes = useStyles();
-  //   const [open, setOpen] = React.useState(false);
-
-  //   if (severity && !open) {
-  //     setOpen(true);
-  //     severity = null;
-  //   }
-
-  //   const handleClick = () => {
-  //     setOpen(true);
-  //   };
-
-  //   const handleClose = (event, reason) => {
-  //     if (reason === 'clickaway') {
-  //       return;
-  //     }
-  //     setOpen(false);
-  //   };
 
   return (
     <div className={classes.root}>
-      {/* <Button variant='outlined' onClick={handleClick}>
-        Open success snackbar
-      </Button> */}
       <Snackbar
         open={severity.status}
         autoHideDuration={4000}
@@ -50,10 +29,6 @@ export default function CustomizedSnackbars({ severity, closeSnackBar }) {
           {severity.text}
         </Alert>
       </Snackbar>
-      {/* <Alert severity='error'>This is an error message!</Alert>
-      <Alert severity='warning'>This is a warning message!</Alert>
-      <Alert severity='info'>This is an information message!</Alert>
-      <Alert severity='success'>This is a success message!</Alert> */}
     </div>
   );
 }

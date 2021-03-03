@@ -1,4 +1,4 @@
-h1 {
+h3 {
   margin: 2rem;
 }
 
@@ -7,6 +7,10 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+}
+
+.app-wrapper {
+  outline: none;
 }
 
 .current-player-info {

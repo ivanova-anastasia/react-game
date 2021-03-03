@@ -1,18 +1,18 @@
 import React from 'react';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+import Checkbox from '@material-ui/core/Checkbox';
 
-export default function SwitchLabels({ changeState, value, labelText }) {
+export default function CheckboxLabels({ title, isChecked, changeState }) {
   return (
     <FormControlLabel
       control={
-        <Switch
-          checked={value}
+        <Checkbox
+          checked={isChecked}
           onChange={(event) => changeState(event.target.checked)}
           name='checkedA'
         />
       }
-      label={labelText}
+      label={title}
     />
   );
 }

@@ -8,12 +8,11 @@
 
 body {
   background-color: #116466;
-  color: white;
+  color: #d1e8e2;
   font-family: 'Roboto', sans-serif;
   display: flex;
   justify-content: center;
   min-height: 100vh;
-  padding: 2rem;
 }
 
 #root {

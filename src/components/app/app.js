@@ -16,7 +16,15 @@ import {
   setVolume,
 } from './../../helpers/AudioHelper';
 
-import { Clear, ExposureZero } from '@material-ui/icons';
+import {
+  Clear,
+  ExposureZero,
+  Accessibility,
+  Adb,
+  Apple,
+  SportsHandball,
+} from '@material-ui/icons';
+
 import './app.css';
 
 const App = () => {
@@ -31,9 +39,24 @@ const App = () => {
   const START_SNACK_BAR_MSG = 'The game has started. Welcome!';
   const DRAW_SNACK_BAR_MSG = 'Tie! We are all winners :)';
 
+  const getIconView = (Icon, key) => {
+    return <Icon key={key} style={{ fontSize: '100%' }} />;
+  };
+
+  const X_VIEWS = [
+    getIconView(Clear, 0),
+    getIconView(Accessibility, 1),
+    getIconView(Adb, 2),
+  ];
+  const O_VIEWS = [
+    getIconView(ExposureZero, 0),
+    getIconView(SportsHandball, 1),
+    getIconView(Apple, 2),
+  ];
+
   const [iconView, setIconView] = useState({
-    x: <Clear style={{ fontSize: '100%' }} />,
-    o: <ExposureZero style={{ fontSize: '100%' }} />,
+    x: X_VIEWS[0],
+    o: O_VIEWS[0],
   });
 
   const [severitySnackBar, setSeveritySnackBar] = useState({
@@ -41,6 +64,8 @@ const App = () => {
     severity: null,
     text: null,
   });
+
+  const [stepsBlockIsShowing, setStepsBlockIsShowing] = useState(true);
 
   const initialHistoryState = [
     { layerName: null, boardState: Array(9).fill(null) },
@@ -61,9 +86,9 @@ const App = () => {
   });
 
   const [stepNumber, setStepNumber] = useState(ZERO_STEP_NUMBER);
-  const [xIsNext, setXisNext] = useState(true);
+  const [xIsNext, setXisNext] = useState({ value: true, defaultValue: true });
   const winner = calculateWinner(history[stepNumber].boardState);
-  const xO = xIsNext ? 'X' : 'O';
+  const xO = xIsNext.value ? 'X' : 'O';
 
   const handleClick = (i) => {
     const historyPoint = history.slice(0, stepNumber + 1);
@@ -80,14 +105,18 @@ const App = () => {
     };
     setHistory([...historyPoint, historyItem]);
     setStepNumber(historyPoint.length);
-    setXisNext(!xIsNext);
+    setXisNext((prevState) => {
+      return { ...prevState, value: !xIsNext.value };
+    });
     if (sounds.isPlay) playSound(sounds.stepAudio);
   };
 
   const startNewGameClick = () => {
     setHistory(initialHistoryState);
     setStepNumber(ZERO_STEP_NUMBER);
-    setXisNext(true);
+    setXisNext((prevState) => {
+      return { ...prevState, value: xIsNext.defaultValue };
+    });
     checkForUpdateSnackBar(START_SEVERITY);
   };
 
@@ -120,14 +149,15 @@ const App = () => {
         break;
       }
       case START_SEVERITY: {
-        if (START_SEVERITY !== severitySnackBar.severity) {
-          setSeveritySnackBar({
-            severity: START_SEVERITY,
-            status: true,
-            text: START_SNACK_BAR_MSG,
-          });
-        }
+        setSeveritySnackBar({
+          severity: START_SEVERITY,
+          status: true,
+          text: START_SNACK_BAR_MSG,
+        });
         break;
+      }
+      default: {
+        console.log('Unknown snack bar status: ' + status);
       }
     }
   };
@@ -180,31 +210,92 @@ const App = () => {
     });
   };
 
+  const changeFirstPlayerState = (value) => {
+    const newFirstPlayer = value;
+    const currentValue = history.length === 1 ? newFirstPlayer : xIsNext.value;
+    setXisNext({ value: currentValue, defaultValue: newFirstPlayer });
+  };
+
+  const changeXIconView = (value) => {
+    const currentView = value;
+    setIconView((prev) => {
+      return { ...prev, x: currentView };
+    });
+  };
+
+  const changeOIconView = (value) => {
+    const currentView = value;
+    setIconView((prev) => {
+      return { ...prev, o: currentView };
+    });
+  };
+
+  const changeStepsBlockIsShowingState = (value) => {
+    setStepsBlockIsShowing(value);
+  };
+
+  const handleKeyDown = (event) => {
+    switch (event.key) {
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9': {
+        handleClick(event.key - 1);
+        break;
+      }
+      case 'Enter': {
+        startNewGameClick();
+        break;
+      }
+      default: {
+      }
+    }
+  };
+
   return (
     <>
-      <h3 className='current-player-info'>{getResultMsg()}</h3>
-      <div className='game-wrapper'>
-        <VerticalTabs
-          changeMusicState={changeMusicState}
-          music={music}
-          changeVolumeMusic={changeVolumeMusic}
-          changeSoundsState={changeSoundsState}
-          sounds={sounds}
-          changeVolumeSounds={changeVolumeSounds}
+      <div className='app-wrapper' onKeyDown={handleKeyDown} tabIndex='0'>
+        <h3 className='current-player-info'>{getResultMsg()}</h3>
+        <div className='game-wrapper'>
+          <VerticalTabs
+            changeMusicState={changeMusicState}
+            music={music}
+            changeVolumeMusic={changeVolumeMusic}
+            changeSoundsState={changeSoundsState}
+            sounds={sounds}
+            changeVolumeSounds={changeVolumeSounds}
+            xIsFirst={xIsNext.defaultValue}
+            changeFirstPlayerState={changeFirstPlayerState}
+            iconView={iconView}
+            changeXIconView={changeXIconView}
+            changeOIconView={changeOIconView}
+            xSelects={X_VIEWS}
+            oSelects={O_VIEWS}
+            changeStepsBlockIsShowingState={changeStepsBlockIsShowingState}
+            stepsBlockIsShowing={stepsBlockIsShowing}
+          />
+          <Board
+            squares={history[stepNumber].boardState}
+            icons={iconView}
+            onClick={handleClick}
+          />
+          <CustomizedTables
+            stepsBlockIsShowing={stepsBlockIsShowing}
+            history={history}
+          />
+        </div>
+        <CustomizedSnackbars
+          severity={severitySnackBar}
+          closeSnackBar={closeSnackBar}
         />
-        <Board
-          squares={history[stepNumber].boardState}
-          icons={iconView}
-          onClick={handleClick}
-        />
-        <CustomizedTables history={history} />
+        <FloatingBtn onClick={startNewGameClick} />
+        <Footer />
       </div>
-      <CustomizedSnackbars
-        severity={severitySnackBar}
-        closeSnackBar={closeSnackBar}
-      />
-      <FloatingBtn onClick={startNewGameClick} />
-      <Footer />
     </>
   );
 };

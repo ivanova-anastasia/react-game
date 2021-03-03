@@ -16,9 +16,7 @@ export default function ContinuousSlider({ volume, changeVolumeMusic }) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <Typography id='continuous-slider' gutterBottom>
-        Volume
-      </Typography>
+      <Typography gutterBottom>Volume</Typography>
       <Grid container spacing={2}>
         <Grid item>
           <VolumeDown />

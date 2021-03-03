@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     '& > *': {
       position: 'fixed',
-      bottom: '10%',
+      bottom: '15%',
       width: 'fit-content;',
       height: 'fit-content;',
       color: '#d1e8e2',

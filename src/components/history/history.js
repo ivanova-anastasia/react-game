@@ -31,7 +31,7 @@ function createData(step, player, time) {
   return { step, player, time };
 }
 
-export default function CustomizedTables({ history }) {
+export default function CustomizedTables({ history, stepsBlockIsShowing }) {
   const rows = history.map((_step, move) => {
     return move ? createData(move, _step.playerName, _step.time) : null;
   });
@@ -50,7 +50,11 @@ export default function CustomizedTables({ history }) {
     : null;
 
   return (
-    <div className='history-table-wrapper'>
+    <div
+      className={`history-table-wrapper ${
+        stepsBlockIsShowing ? null : 'history-table-hidden'
+      }`}
+    >
       <TableContainer className='history' component={Paper}>
         <Table aria-label='customized table'>
           <TableHead>

@@ -7,6 +7,10 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import SwitchLabels from './basic-elements/switch';
 import ContinuousSlider from './basic-elements/slider';
+import SimpleSelect from './basic-elements/select';
+import CheckboxLabels from './basic-elements/checkbox';
+
+import './app-settings.css';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -21,7 +25,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+          <Typography component={'span'}>{children}</Typography>
         </Box>
       )}
     </div>
@@ -47,7 +51,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#d1e8e2',
     color: '#116466',
     display: 'flex',
-    height: 224,
+    height: 270,
+    width: 410,
   },
   tabs: {
     borderRight: `1px solid ${theme.palette.divider}`,
@@ -61,6 +66,15 @@ export default function VerticalTabs({
   changeSoundsState,
   sounds,
   changeVolumeSounds,
+  xIsFirst,
+  changeFirstPlayerState,
+  iconView,
+  xSelects,
+  oSelects,
+  changeXIconView,
+  changeOIconView,
+  changeStepsBlockIsShowingState,
+  stepsBlockIsShowing,
 }) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
@@ -82,11 +96,14 @@ export default function VerticalTabs({
         >
           <Tab label='Sounds' {...a11yProps(0)} />
           <Tab label='Music' {...a11yProps(1)} />
+          <Tab label='Customizations' {...a11yProps(2)} />
+          <Tab label='Hotkeys' {...a11yProps(3)} />
         </Tabs>
         <TabPanel value={value} index={0}>
           <SwitchLabels
-            changeMusicState={changeSoundsState}
-            music={sounds.isPlay}
+            changeState={changeSoundsState}
+            value={sounds.isPlay}
+            labelText='off/on'
           />
           <ContinuousSlider
             volume={sounds.volume}
@@ -95,13 +112,44 @@ export default function VerticalTabs({
         </TabPanel>
         <TabPanel value={value} index={1}>
           <SwitchLabels
-            changeMusicState={changeMusicState}
-            music={music.isPlay}
+            changeState={changeMusicState}
+            value={music.isPlay}
+            labelText='off/on'
           />
           <ContinuousSlider
             volume={music.volume}
             changeVolumeMusic={changeVolumeMusic}
           />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <Typography gutterBottom>Who is first?</Typography>
+          <SwitchLabels
+            changeState={changeFirstPlayerState}
+            value={xIsFirst}
+            labelText='y/x'
+          />
+          <SimpleSelect
+            items={xSelects}
+            value={xSelects.find((item) => item.key === iconView.x.key)}
+            changeXIconView={changeXIconView}
+            title='X player'
+          ></SimpleSelect>
+          <SimpleSelect
+            items={oSelects}
+            value={oSelects.find((item) => item.key === iconView.o.key)}
+            changeXIconView={changeOIconView}
+            title='Y player'
+          ></SimpleSelect>
+          <CheckboxLabels
+            title='Show steps'
+            isChecked={stepsBlockIsShowing}
+            changeState={changeStepsBlockIsShowingState}
+          />
+        </TabPanel>
+        <TabPanel value={value} index={3}>
+          <p>You can use keyboard keys: </p>
+          <p>1-9 as a playing board </p>
+          <p>Enter - start of a new game</p>
         </TabPanel>
       </div>
     </div>
