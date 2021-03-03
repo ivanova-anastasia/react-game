@@ -31,7 +31,11 @@ function createData(step, player, time) {
   return { step, player, time };
 }
 
-export default function CustomizedTables({ history, stepsBlockIsShowing }) {
+export default function CustomizedTables({
+  history,
+  stepsBlockIsShowing,
+  cellNames,
+}) {
   const rows = history.map((_step, move) => {
     return move ? createData(move, _step.playerName, _step.time) : null;
   });
@@ -49,6 +53,14 @@ export default function CustomizedTables({ history, stepsBlockIsShowing }) {
       ))
     : null;
 
+  const tableHead = cellNames.map((row, index) => {
+    return (
+      <StyledTableCell key={index} align='right'>
+        {row}
+      </StyledTableCell>
+    );
+  });
+
   return (
     <div
       className={`history-table-wrapper ${
@@ -59,9 +71,10 @@ export default function CustomizedTables({ history, stepsBlockIsShowing }) {
         <Table aria-label='customized table'>
           <TableHead>
             <TableRow>
-              <StyledTableCell>Step №</StyledTableCell>
+              {tableHead}
+              {/* <StyledTableCell align='right'>Step №</StyledTableCell>
               <StyledTableCell align='right'>Player</StyledTableCell>
-              <StyledTableCell align='right'>Time</StyledTableCell>
+              <StyledTableCell align='right'>Time</StyledTableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>{tableBody}</TableBody>

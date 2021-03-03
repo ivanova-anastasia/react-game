@@ -15,7 +15,7 @@ import {
   playMusic,
   stopMusic,
   setVolume,
-} from './../../helpers/AudioHelper';
+} from '../../helpers/audioHelper';
 
 import {
   Clear,
@@ -25,6 +25,7 @@ import {
   Apple,
   SportsHandball,
   Tune,
+  Equalizer,
 } from '@material-ui/icons';
 import IconButton from '@material-ui/core/IconButton';
 
@@ -71,11 +72,14 @@ const App = () => {
   const [stepsBlockIsShowing, setStepsBlockIsShowing] = useState(true);
 
   const [settingDialogOpen, setSettingDialogOpen] = useState(false);
+  const [recordsDialogOpen, setRecordsDialogOpen] = useState(false);
 
   const initialHistoryState = [
-    { layerName: null, boardState: Array(9).fill(null) },
+    { playerName: null, boardState: Array(9).fill(null) },
   ];
   const [history, setHistory] = useState(initialHistoryState);
+
+  const [record, setRecord] = useState([{ playerName: null, time: null }]);
 
   const [music, setMusic] = useState({
     audio: backgroundAudio,
@@ -139,6 +143,13 @@ const App = () => {
             status: true,
             text: WIN_SNACK_BAR_MSG,
           });
+          setRecord([
+            ...record,
+            {
+              playerName: history[history.length - 1].playerName,
+              time: `${history[1].time} - ${history[history.length - 1].time}`,
+            },
+          ]);
         }
         break;
       }
@@ -150,6 +161,13 @@ const App = () => {
             status: true,
             text: DRAW_SNACK_BAR_MSG,
           });
+          setRecord([
+            ...record,
+            {
+              playerName: 'Tie',
+              time: `${history[1].time} - ${history[history.length - 1].time}`,
+            },
+          ]);
         }
         break;
       }
@@ -269,6 +287,13 @@ const App = () => {
     setSettingDialogOpen(false);
   };
 
+  const handleRecordDialogOpen = () => {
+    setRecordsDialogOpen(true);
+  };
+  const handleRecordDialogClose = () => {
+    setRecordsDialogOpen(false);
+  };
+
   return (
     <>
       <div className='app-wrapper' onKeyDown={handleKeyDown} tabIndex='0'>
@@ -276,17 +301,41 @@ const App = () => {
           <IconButton
             className='settings-icon'
             color='inherit'
-            style={{ marginLeft: '5vw', marginRight: '30vw' }}
+            style={{ marginLeft: '5vw', marginRight: '3vw' }}
             onClick={handleSettingDialogOpen}
           >
             <Tune style={{ width: '8vw', height: 'inherit', padding: '15%' }} />
+          </IconButton>
+          <IconButton
+            className='settings-icon'
+            color='inherit'
+            style={{ marginLeft: '5vw', marginRight: '20vw' }}
+            onClick={handleRecordDialogOpen}
+          >
+            <Equalizer
+              style={{ width: '8vw', height: 'inherit', padding: '15%' }}
+            />
           </IconButton>
           <h3 className='current-player-info'>{getResultMsg()}</h3>
         </div>
 
         <CustomizedDialogs
+          handleSettingDialogClose={handleRecordDialogClose}
+          settingDialogOpen={recordsDialogOpen}
+          title='Records'
+          settingsComponent={
+            <CustomizedTables
+              stepsBlockIsShowing={true}
+              history={record}
+              cellNames={['№', 'Winner', 'Time period']}
+            />
+          }
+        />
+
+        <CustomizedDialogs
           handleSettingDialogClose={handleSettingDialogClose}
           settingDialogOpen={settingDialogOpen}
+          title='Settings'
           settingsComponent={
             <VerticalTabs
               changeMusicState={changeMusicState}
@@ -316,6 +365,7 @@ const App = () => {
           <CustomizedTables
             stepsBlockIsShowing={stepsBlockIsShowing}
             history={history}
+            cellNames={['Step №', 'Player', 'Time']}
           />
         </div>
         <CustomizedSnackbars

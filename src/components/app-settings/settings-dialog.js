@@ -51,6 +51,7 @@ export default function CustomizedDialogs({
   settingsComponent,
   settingDialogOpen,
   handleSettingDialogClose,
+  title,
 }) {
   return (
     <div>
@@ -62,7 +63,7 @@ export default function CustomizedDialogs({
           id='customized-dialog-title'
           onClose={handleSettingDialogClose}
         >
-          Settings
+          {title}
         </DialogTitle>
         <DialogContent dividers>{settingsComponent}</DialogContent>
       </Dialog>
