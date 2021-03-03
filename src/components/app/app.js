@@ -3,13 +3,64 @@ import { calculateWinner } from '../../winner';
 import Board from '../board/board';
 import CustomizedTables from './../history/history';
 import Footer from './../footer/footer';
+import FloatingBtn from './../floating-btn/floating-btn';
+import CustomizedSnackbars from './../snackbar/snackbar';
+import VerticalTabs from './../app-settings/app-settings';
+import {
+  stepAudio,
+  winAudio,
+  backgroundAudio,
+  playSound,
+  playMusic,
+  stopMusic,
+  setVolume,
+} from './../../helpers/AudioHelper';
+
+import { Clear, ExposureZero } from '@material-ui/icons';
 import './app.css';
 
 const App = () => {
-  const [history, setHistory] = useState([
+  const ZERO_STEP_NUMBER = 0;
+
+  const WIN_SEVERITY = 'success';
+  const START_SEVERITY = 'info';
+  const DRAW_SEVERITY = 'warning';
+
+  const WIN_SNACK_BAR_MSG =
+    'Small wins are a steady application of a small advantage. Congratulations!';
+  const START_SNACK_BAR_MSG = 'The game has started. Welcome!';
+  const DRAW_SNACK_BAR_MSG = 'Tie! We are all winners :)';
+
+  const [iconView, setIconView] = useState({
+    x: <Clear style={{ fontSize: '100%' }} />,
+    o: <ExposureZero style={{ fontSize: '100%' }} />,
+  });
+
+  const [severitySnackBar, setSeveritySnackBar] = useState({
+    status: false,
+    severity: null,
+    text: null,
+  });
+
+  const initialHistoryState = [
     { layerName: null, boardState: Array(9).fill(null) },
-  ]);
-  const [stepNumber, setStepNumber] = useState(0);
+  ];
+  const [history, setHistory] = useState(initialHistoryState);
+
+  const [music, setMusic] = useState({
+    audio: backgroundAudio,
+    volume: 1,
+    isPlay: false,
+  });
+
+  const [sounds, setSounds] = useState({
+    stepAudio: stepAudio,
+    winAudio: winAudio,
+    volume: 1,
+    isPlay: false,
+  });
+
+  const [stepNumber, setStepNumber] = useState(ZERO_STEP_NUMBER);
   const [xIsNext, setXisNext] = useState(true);
   const winner = calculateWinner(history[stepNumber].boardState);
   const xO = xIsNext ? 'X' : 'O';
@@ -18,7 +69,9 @@ const App = () => {
     const historyPoint = history.slice(0, stepNumber + 1);
     const current = historyPoint[stepNumber];
     const squares = [...current.boardState];
-    if (winner || squares[i]) return;
+    if (winner || squares[i]) {
+      return;
+    }
     squares[i] = xO;
     const historyItem = {
       playerName: xO,
@@ -28,17 +81,129 @@ const App = () => {
     setHistory([...historyPoint, historyItem]);
     setStepNumber(historyPoint.length);
     setXisNext(!xIsNext);
+    if (sounds.isPlay) playSound(sounds.stepAudio);
+  };
+
+  const startNewGameClick = () => {
+    setHistory(initialHistoryState);
+    setStepNumber(ZERO_STEP_NUMBER);
+    setXisNext(true);
+    checkForUpdateSnackBar(START_SEVERITY);
+  };
+
+  const closeSnackBar = () => {
+    setSeveritySnackBar({ ...severitySnackBar, status: false });
+  };
+
+  const checkForUpdateSnackBar = (status) => {
+    switch (status) {
+      case WIN_SEVERITY: {
+        if (WIN_SEVERITY !== severitySnackBar.severity) {
+          if (sounds.isPlay) playSound(sounds.winAudio);
+          setSeveritySnackBar({
+            severity: WIN_SEVERITY,
+            status: true,
+            text: WIN_SNACK_BAR_MSG,
+          });
+        }
+        break;
+      }
+      case DRAW_SEVERITY: {
+        if (DRAW_SEVERITY !== severitySnackBar.severity) {
+          if (sounds.isPlay) playSound(sounds.winAudio);
+          setSeveritySnackBar({
+            severity: DRAW_SEVERITY,
+            status: true,
+            text: DRAW_SNACK_BAR_MSG,
+          });
+        }
+        break;
+      }
+      case START_SEVERITY: {
+        if (START_SEVERITY !== severitySnackBar.severity) {
+          setSeveritySnackBar({
+            severity: START_SEVERITY,
+            status: true,
+            text: START_SNACK_BAR_MSG,
+          });
+        }
+        break;
+      }
+    }
+  };
+
+  const getResultMsg = () => {
+    let resultMsg;
+    if (winner) {
+      resultMsg = `Winner: ${history[history.length - 1].playerName}`;
+      checkForUpdateSnackBar(WIN_SEVERITY);
+    } else if (history.length === 10) {
+      resultMsg = `Tie! :)`;
+      checkForUpdateSnackBar(DRAW_SEVERITY);
+    } else {
+      resultMsg = 'Turn ' + xO;
+    }
+    return resultMsg;
+  };
+
+  const changeMusicState = (isPlay) => {
+    if (isPlay) {
+      playMusic(music.audio);
+    } else {
+      stopMusic(music.audio);
+    }
+    setMusic((prevState) => {
+      return { ...prevState, isPlay: isPlay };
+    });
+  };
+
+  const changeSoundsState = (isPlay) => {
+    setSounds((prevState) => {
+      return { ...prevState, isPlay: isPlay };
+    });
+  };
+
+  const changeVolumeMusic = (value) => {
+    const newVolume = value / 100;
+    setVolume(music.audio, newVolume);
+    setMusic((prevState) => {
+      return { ...prevState, volume: newVolume };
+    });
+  };
+
+  const changeVolumeSounds = (value) => {
+    const newVolume = value / 100;
+    setVolume(sounds.stepAudio, newVolume);
+    setVolume(sounds.winAudio, newVolume);
+    setSounds((prevState) => {
+      return { ...prevState, volume: newVolume };
+    });
   };
 
   return (
     <>
-      <h3 className='current-player-info'>
-        {winner ? 'Winner: ' + winner : 'Turn ' + xO}
-      </h3>
+      <h3 className='current-player-info'>{getResultMsg()}</h3>
       <div className='game-wrapper'>
-        <Board squares={history[stepNumber].boardState} onClick={handleClick} />
+        <VerticalTabs
+          changeMusicState={changeMusicState}
+          music={music}
+          changeVolumeMusic={changeVolumeMusic}
+          changeSoundsState={changeSoundsState}
+          sounds={sounds}
+          changeVolumeSounds={changeVolumeSounds}
+        />
+        <Board
+          squares={history[stepNumber].boardState}
+          icons={iconView}
+          onClick={handleClick}
+        />
         <CustomizedTables history={history} />
       </div>
+      <CustomizedSnackbars
+        severity={severitySnackBar}
+        closeSnackBar={closeSnackBar}
+      />
+      <FloatingBtn onClick={startNewGameClick} />
       <Footer />
     </>
   );

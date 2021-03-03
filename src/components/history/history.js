@@ -38,8 +38,8 @@ export default function CustomizedTables({ history }) {
   rows.shift();
 
   const tableBody = rows
-    ? rows.map((row) => (
-        <StyledTableRow key={row.name}>
+    ? rows.map((row, i) => (
+        <StyledTableRow key={i}>
           <StyledTableCell component='th' scope='row'>
             {row.step}
           </StyledTableCell>
