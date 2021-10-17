@@ -328,6 +328,7 @@ const App = () => {
               stepsBlockIsShowing={true}
               history={record}
               cellNames={['№', 'Winner', 'Time period']}
+              rowNumber = {record.length}
             />
           }
         />
@@ -365,7 +366,8 @@ const App = () => {
           <CustomizedTables
             stepsBlockIsShowing={stepsBlockIsShowing}
             history={history}
-            cellNames={['Step №', 'Player', 'Time']}
+            cellNames={['№', 'Player', 'Step time']}
+            rowNumber = {9}
           />
         </div>
         <CustomizedSnackbars

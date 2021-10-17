@@ -35,23 +35,23 @@ export default function CustomizedTables({
   history,
   stepsBlockIsShowing,
   cellNames,
+  rowNumber
 }) {
   const rows = history.map((_step, move) => {
     return move ? createData(move, _step.playerName, _step.time) : null;
   });
   rows.shift();
 
-  const tableBody = rows
-    ? rows.map((row, i) => (
-        <StyledTableRow key={i}>
-          <StyledTableCell component='th' scope='row'>
-            {row.step}
-          </StyledTableCell>
-          <StyledTableCell align='right'>{row.player}</StyledTableCell>
-          <StyledTableCell align='right'>{row.time}</StyledTableCell>
-        </StyledTableRow>
-      ))
-    : null;
+    const tableBody = new Array(rowNumber).fill().map((row, i) => {
+     const unavailableStepClass = rows[i] ? null : 'history-row-hidden';
+      return (<StyledTableRow key={i} className={unavailableStepClass}>
+        <StyledTableCell component='th' scope='row'>
+        {i + 1}
+      </StyledTableCell>
+      <StyledTableCell align='right'>{rows[i] ? rows[i].player : null}</StyledTableCell>
+      <StyledTableCell align='right'>{rows[i] ? rows[i].time : null}</StyledTableCell>
+        </StyledTableRow>)
+    });
 
   const tableHead = cellNames.map((row, index) => {
     return (
@@ -72,9 +72,6 @@ export default function CustomizedTables({
           <TableHead>
             <TableRow>
               {tableHead}
-              {/* <StyledTableCell align='right'>Step №</StyledTableCell>
-              <StyledTableCell align='right'>Player</StyledTableCell>
-              <StyledTableCell align='right'>Time</StyledTableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>{tableBody}</TableBody>
