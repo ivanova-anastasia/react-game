@@ -1,0 +1,29 @@
+h3 {
+  margin: 2rem;
+}
+
+.game-wrapper {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.app-wrapper {
+  outline: none;
+}
+
+.current-player-info {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2%;
+}
+
+.app-header {
+  display: flex;
+}
+
+.settings-icon {
+  margin-left: 5vw;
+  margin-right: 30vw;
+}

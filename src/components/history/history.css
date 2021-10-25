@@ -1,0 +1,13 @@
+.history-table-wrapper {
+  height: fit-content;
+  margin: 2%;
+  opacity: 0.5;
+}
+
+.history-table-hidden {
+  visibility: hidden;
+}
+
+.history-row-hidden {
+  visibility: hidden;
+}
